@@ -117,7 +117,17 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/VAULT54 UI.mp4" type="video/mp4" />
+      </video>
+      {/* Backdrop Overlay */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
@@ -165,40 +175,40 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-white/90 mb-2">Full Name (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Full Name (Required)</label>
                       <input
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Email Address (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Email Address (Required)</label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Phone Number (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Phone Number (Required)</label>
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Profession / Industry (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Profession / Industry (Required)</label>
                       <select
                         value={profession}
                         onChange={(e) => setProfession(e.target.value)}
@@ -222,7 +232,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Instagram Handle (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Instagram Handle (Required)</label>
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -232,7 +242,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                             setInstagramVerified(false);
                           }}
                           placeholder="@username"
-                          className="flex-1 px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                          className="flex-1 px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                           style={{ fontFamily: 'Cormorant Garamond, serif' }}
                         />
                         <button
@@ -263,12 +273,12 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Referral Code (Optional)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Referral Code (Optional)</label>
                       <input
                         type="text"
                         value={referralCode}
                         onChange={(e) => setReferralCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
                     </div>
@@ -295,7 +305,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <div
                     ref={ndaRef}
                     onScroll={handleNdaScroll}
-                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white/80 space-y-4"
+                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white space-y-4 text-base leading-relaxed"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}
                   >
                     <h3 className="text-white">CONFIDENTIALITY AND NON-DISCLOSURE AGREEMENT</h3>
@@ -383,6 +393,14 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
               {/* STEP 3: Vision & Expectations */}
               {step === 3 && (
                 <div className="space-y-6">
+                  {/* Animated Logo */}
+                  <div className="flex justify-center mb-4">
+                    <img 
+                      src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/vault54-logo.gif" 
+                      alt="VAULT54 Logo" 
+                      className="h-24 w-auto"
+                    />
+                  </div>
                   <h2 className="text-white text-center text-3xl drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     Step 3 of 4: About VAULT54
                   </h2>
@@ -390,7 +408,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <div
                     ref={visionRef}
                     onScroll={handleVisionScroll}
-                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white/80 space-y-4"
+                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white space-y-4 text-base leading-relaxed"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}
                   >
                     <h3 className="text-white">OUR VISION</h3>
@@ -478,7 +496,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-white/90 mb-2">Face Photo (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Face Photo (Required)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -488,7 +506,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Full Body Photo (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Full Body Photo (Required)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -498,7 +516,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Additional Photo (Optional)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Additional Photo (Optional)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -508,7 +526,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white/90 mb-2">Date of Birth (Required)</label>
+                      <label className="block text-white font-semibold mb-2 text-base">Date of Birth (Required)</label>
                       <input
                         type="date"
                         value={dob}
