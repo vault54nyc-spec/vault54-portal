@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { FrostedGlassButton } from './FrostedGlassButton';
+import { MemberQRCode } from './MemberQRCode';
+import { ImageWithFallback } from './figma/ImageWithFallback';
+import { CountdownTimer } from './CountdownTimer';
+import { TestimonialsCarousel } from './TestimonialsCarousel';
+import { CostumeRecommendations } from './CostumeRecommendations';
+import { MediaSection } from './MediaSection';
+import { InstagramFeed } from './InstagramFeed';
+import { NewsFeed } from './NewsFeed';
+import { NewsletterSignup } from './NewsletterSignup';
+import { ConfirmationModal } from './ConfirmationModal';
 
 interface MemberPortalProps {
   onLogout: () => void;
@@ -20,6 +30,7 @@ interface Event {
 
 export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [confirmationModal, setConfirmationModal] = useState<{ isOpen: boolean; message: string; title?: string; type?: 'info' | 'success' | 'error' } | null>(null);
   const memberNumber = 'V54-M001';
   const referralCode = 'VLT-R' + Math.floor(Math.random() * 9000 + 1000);
 
@@ -61,22 +72,40 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
 
   const copyReferralCode = () => {
     navigator.clipboard.writeText(referralCode);
-    alert(`✓ Referral code copied to clipboard!\n\n${referralCode}`);
+    setConfirmationModal({
+      isOpen: true,
+      message: `✓ Referral code copied to clipboard!\n\n${referralCode}`,
+      title: 'Code Copied'
+    });
   };
 
   return (
-    <div className="fixed inset-0 bg-black text-white overflow-y-auto" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+    <div className="fixed inset-0 text-white overflow-hidden" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/BorcellE%20(1).png)',
+        }}
+      />
+      
+      {/* Main scrollable content */}
+      <div className="relative z-10 h-full overflow-y-auto">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-xl border-b border-[#D4AF37]/30 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-xl md:text-2xl tracking-[0.3em] text-[#D4AF37]">VAULT54</div>
+          <img 
+            src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/vault54-logo.gif" 
+            alt="VAULT54 Logo" 
+            className="h-8 md:h-10 w-auto"
+          />
           <div className="flex items-center gap-2 md:gap-4">
             <span className="px-3 md:px-4 py-1 md:py-2 rounded bg-[#167D7F]/20 backdrop-blur-md text-[#167D7F] text-xs md:text-sm border border-[#167D7F]/30">
               {memberNumber}
             </span>
             <button
               onClick={onLogout}
-              className="px-3 md:px-4 py-2 bg-black/30 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] rounded text-sm transition-all duration-300 hover:bg-black/40 hover:border-[#D4AF37]/80 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+              className="px-3 md:px-4 py-2 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-white rounded text-sm transition-all duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)]"
             >
               LOGOUT
             </button>
@@ -89,12 +118,42 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/10 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.1),transparent_70%)]" />
         <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl text-[#D4AF37] mb-4">Welcome to Your Portal</h1>
+          <h1 
+            className="text-3xl md:text-4xl text-[rgb(255,250,250)] mb-4 font-bold"
+            style={{ textShadow: '0 0 20px rgba(255,250,250,0.5), 0 0 40px rgba(212,175,55,0.3)' }}
+          >
+            Welcome to Your Portal
+          </h1>
           <p className="text-gray-400 tracking-widest">VIRTUS ET DISCRETIO</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+        {/* QR Code & Wristband Section */}
+        <section className="mb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* QR Code */}
+          <MemberQRCode memberId={memberNumber} memberName="Test Member" />
+          
+          {/* Wristband Reminder */}
+          <div className="flex flex-col justify-center gap-4 p-6 bg-gradient-to-br from-[#D4AF37]/10 to-[#167D7F]/10 border border-[#D4AF37]/30 rounded-xl">
+            <h3 className="text-xl text-[#D4AF37] uppercase tracking-wider" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Wristband Preference Reminder
+            </h3>
+            <div className="space-y-3">
+              <p className="text-white" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                Your current wristband preference is set in your profile settings.
+              </p>
+              <p className="text-gray-300 text-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                The wristband color listed in your profile will be the one you receive at the event. Please ensure your preferences are up to date before attending.
+              </p>
+              <div className="flex gap-2 items-center p-3 bg-black/30 rounded-lg">
+                <div className="w-6 h-6 rounded-full border-2 border-[#D4AF37] bg-[#D4AF37]/20" />
+                <span className="text-white" style={{ fontFamily: 'Cormorant Garamond, serif' }}>Current: Gold Tier</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Upcoming Events */}
         <section className="mb-12">
           <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
@@ -141,9 +200,14 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        alert('Proceeding to secure checkout...');
+                        setConfirmationModal({
+                          isOpen: true,
+                          message: 'Proceeding to secure checkout...',
+                          title: '🎟️ Checkout',
+                          type: 'info'
+                        });
                       }}
-                      className="w-full mt-4 bg-black/30 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] py-3 rounded-lg transition-all duration-300 hover:bg-black/40 hover:border-[#D4AF37]/80 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] uppercase tracking-wider"
+                      className="w-full mt-4 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-white py-3 rounded-lg transition-all duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] uppercase tracking-wider"
                     >
                       PURCHASE TICKET
                     </button>
@@ -166,7 +230,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
         {/* Referral Code Section */}
         <section className="mb-12 bg-gradient-to-br from-[#D4AF37]/10 to-[#167D7F]/10 border border-[#D4AF37]/30 rounded-xl p-6 md:p-8 text-center">
           <h3 className="text-2xl md:text-3xl text-[#D4AF37] mb-4">Share VAULT54</h3>
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-300 mb-6 text-lg">
             Help grow our community by referring accomplished professionals who align with our values.
           </p>
           <div className="bg-black/50 border-2 border-dashed border-[#D4AF37] rounded-xl p-6 inline-block">
@@ -222,6 +286,127 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
             </ul>
           </div>
         </section>
+
+        {/* Gallery Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Community Gallery
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/phonto+40.webp"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/Jocks.webp"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/Main+Squeeze+Nate+DeRidder+Gay+Erotic+Art+Homoerotic+Paiting+Nude+Men+Muscle+Jock.webp"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/images.jpeg"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/Nate+DeRidder+gay+erotic+art+mucsle+jock+men+gay+porn+artwork+painting+interracial+couple.webp"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/images (1).jpeg"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/s-l1200.jpg"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all">
+              <ImageWithFallback 
+                src="site-assets/Nate+DeRidder+gay+erotic+art+mucsle+jock+men+gay+porn+artwork+painting+locker+room+hunk+underwear+Bulge+Lover+Bundle.webp"
+                alt="Gallery Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Countdown Timer */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Countdown to Next Event
+          </h2>
+          <CountdownTimer targetDate={new Date('2026-03-29T22:00:00')} eventName="When in Rome" />
+        </section>
+
+        {/* Testimonials Carousel */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Member Testimonials
+          </h2>
+          <TestimonialsCarousel />
+        </section>
+
+        {/* Costume Recommendations */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Costume Recommendations
+          </h2>
+          <CostumeRecommendations />
+        </section>
+
+        {/* Media Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Media Section
+          </h2>
+          <MediaSection />
+        </section>
+
+        {/* Instagram Feed */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Instagram Feed
+          </h2>
+          <InstagramFeed />
+        </section>
+
+        {/* News Feed */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            News Feed
+          </h2>
+          <NewsFeed />
+        </section>
+
+        {/* Newsletter Signup */}
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl text-[#D4AF37] mb-6 md:mb-8 pb-4 border-b border-[#D4AF37]/20">
+            Newsletter Signup
+          </h2>
+          <NewsletterSignup />
+        </section>
       </div>
 
       {/* Event Detail Modal */}
@@ -272,10 +457,15 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
               {selectedEvent.status === 'available' && (
                 <button
                   onClick={() => {
-                    alert('🎟️ Proceeding to secure checkout...');
+                    setConfirmationModal({
+                      isOpen: true,
+                      message: 'Proceeding to secure checkout...',
+                      title: '🎟️ Checkout',
+                      type: 'info'
+                    });
                     setSelectedEvent(null);
                   }}
-                  className="w-full bg-black/30 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] py-4 rounded-lg transition-all duration-300 hover:bg-black/40 hover:border-[#D4AF37]/80 hover:shadow-[0_0_40px_rgba(212,175,55,0.5)] uppercase tracking-wider text-lg"
+                  className="w-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-white py-4 rounded-lg transition-all duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] uppercase tracking-wider text-lg"
                 >
                   PROCEED TO CHECKOUT
                 </button>
@@ -284,6 +474,17 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      {confirmationModal && (
+        <ConfirmationModal
+          isOpen={confirmationModal.isOpen}
+          message={confirmationModal.message}
+          title={confirmationModal.title}
+          onClose={() => setConfirmationModal(null)}
+        />
+      )}
+      </div>
     </div>
   );
 };

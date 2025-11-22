@@ -5,11 +5,13 @@ import { FrostedGlassButton } from './FrostedGlassButton';
 interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  skipNDA?: boolean;
 }
 
 export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   isOpen,
   onClose,
+  skipNDA = false,
 }) => {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -27,6 +29,16 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   const [ndaRead, setNdaRead] = useState(false);
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const ndaRef = useRef<HTMLDivElement>(null);
+
+  // Effect to skip NDA step if coming from Syndicate Bridge
+  useEffect(() => {
+    if (skipNDA && isOpen) {
+      // Mark NDA as already accepted
+      setNdaScrolled(true);
+      setNdaRead(true);
+      setNdaAccepted(true);
+    }
+  }, [skipNDA, isOpen]);
   
   // Step 3 - Vision
   const [visionScrolled, setVisionScrolled] = useState(false);

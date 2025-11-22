@@ -6,6 +6,7 @@ import { InvestorPortal } from './components/InvestorPortal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { MemberPortal } from './components/MemberPortal';
 import { ContentCreatorApplication } from './components/ContentCreatorApplication';
+import { GoldParticles } from './components/GoldParticles';
 import ColorVariations from './ColorVariations';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
   const [accessCode, setAccessCode] = useState('');
   const [totalMembers] = useState(12); // Mock data - will come from backend
   const [totalApplicants] = useState(28); // Mock data - will come from backend
+  const [skipApplicationNDA, setSkipApplicationNDA] = useState(false); // Track if coming from Syndicate
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -91,7 +93,6 @@ export default function App() {
           autoPlay
           muted={isMuted}
           playsInline
-          loop
           src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/Copy%20of%20Jersey.mp4"
         />
         <button
@@ -121,7 +122,17 @@ export default function App() {
 
   // Investor Portal Screen
   if (currentScreen === 'investor-portal') {
-    return <InvestorPortal onLogout={() => setCurrentScreen('landing')} />;
+    return (
+      <InvestorPortal 
+        onLogout={() => setCurrentScreen('landing')} 
+        onBridgeComplete={() => {
+          // User completed Syndicate Bridge, open Application Modal and skip NDA
+          setSkipApplicationNDA(true);
+          setCurrentScreen('landing');
+          setIsApplicationModalOpen(true);
+        }}
+      />
+    );
   }
 
   // Member Portal Screen
@@ -132,6 +143,9 @@ export default function App() {
   // SCREEN 2: Main Landing Page
   return (
     <div className="fixed inset-0 overflow-hidden">
+      {/* Gold Particles */}
+      <GoldParticles />
+
       {/* Video Background (after first view) or Animated Image Background (fallback) */}
       {hasSeenIntro ? (
         <>
@@ -269,14 +283,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Color Demo Button - Bottom Right */}
-      <button
-        onClick={() => setShowColorDemo(true)}
-        className="absolute bottom-8 right-8 px-4 py-2 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-white rounded-lg hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all text-xs tracking-wider uppercase"
-      >
-        🎨 Color Variations
-      </button>
-
       {/* SCREEN 3: Welcome Back Modal */}
       <FrostedGlassModal
         isOpen={isAccessModalOpen}
@@ -321,15 +327,15 @@ export default function App() {
             <FrostedGlassButton
               onClick={() => {
                 const code = accessCode.toLowerCase().trim();
-                if (code === 'zeus87') {
+                if (code === 'zeus123') {
                   setCurrentScreen('admin-dashboard');
                   setIsAccessModalOpen(false);
                 } else if (code === 'member123') {
                   // Test member portal access code
                   setCurrentScreen('member-portal');
                   setIsAccessModalOpen(false);
-                } else if (code) {
-                  // Check if it's an investor code (placeholder for backend validation)
+                } else if (code === 'investor123') {
+                  // Investor code - opens Syndicate Bridge flow
                   setCurrentScreen('investor-portal');
                   setIsAccessModalOpen(false);
                 } else {
@@ -347,6 +353,7 @@ export default function App() {
       <ApplicationModal
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
+        skipNDA={skipApplicationNDA}
       />
 
       {/* Content Creator Application Modal */}
