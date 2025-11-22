@@ -11,6 +11,7 @@ import { InstagramFeed } from './InstagramFeed';
 import { NewsFeed } from './NewsFeed';
 import { NewsletterSignup } from './NewsletterSignup';
 import { ConfirmationModal } from './ConfirmationModal';
+import { MemberGallery } from './media/MemberGallery';
 
 interface MemberPortalProps {
   onLogout: () => void;
@@ -406,7 +407,14 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
             Newsletter Signup
           </h2>
           <NewsletterSignup />
-        </section>
+        
+      {/* Members Gallery Section */}
+      <section className="space-y-6">
+        <div className="bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 rounded-2xl p-8">
+          <MemberGallery />
+        </div>
+      </section>
+</section>
       </div>
 
       {/* Event Detail Modal */}
