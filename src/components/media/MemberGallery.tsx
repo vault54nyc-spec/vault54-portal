@@ -10,36 +10,36 @@ interface GalleryImage {
 }
 
 // Cloudflare R2 bucket URL
-const R2_BASE_URL = 'https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev';
+// const R2_BASE_URL = 'https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev';
 
 const GALLERY_IMAGES: GalleryImage[] = [
   {
     id: 9,
-    src: `${R2_BASE_URL}/gallery-9.webp`,
+    src: `/gallery-9.webp`,
     alt: 'Intimate artistic photography',
     description: 'Exclusive member content showcasing intimate moments'
   },
   {
     id: 10,
-    src: `${R2_BASE_URL}/gallery-10.webp`,
+    src: `/gallery-10.webp`,
     alt: 'Artistic nude embrace',
     description: 'Fine art photography celebrating the male form'
   },
   {
     id: 11,
-    src: `${R2_BASE_URL}/gallery-11.webp`,
+    src: `/gallery-11.webp`,
     alt: 'Locker room lifestyle',
     description: 'Behind the scenes of VAULT54 member spaces'
   },
   {
     id: 12,
-    src: `${R2_BASE_URL}/gallery-12.webp`,
+    src: `/gallery-12.webp`,
     alt: 'Lifestyle photography',
     description: 'Authentic moments from our exclusive community'
   },
   {
     id: 13,
-    src: `${R2_BASE_URL}/gallery-13.webp`,
+    src: `/gallery-13.webp`,
     alt: 'Artistic portraiture collection',
     description: 'Curated fine art photography'
   },
