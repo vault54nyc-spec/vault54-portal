@@ -236,7 +236,7 @@ export default function App() {
               </svg>
             </a>
             <a
-              href="https://instagram.com/vault54"
+              href="https://instagram.com/vault54nyc"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
@@ -260,7 +260,7 @@ export default function App() {
               </svg>
             </a>
             <a
-              href="https://x.com/vault54"
+              href="https://x.com/Vaultfiftyfour"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"

@@ -53,7 +53,7 @@ export const InstagramFeed: React.FC = () => {
           </h3>
         </div>
         <a
-          href="https://instagram.com/vaultfiftyfour"
+          href="https://instagram.com/vault54nyc"
           target="_blank"
           rel="noopener noreferrer"
           className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
@@ -71,7 +71,7 @@ export const InstagramFeed: React.FC = () => {
         {instagramPosts.map((post) => (
           <a
             key={post.id}
-            href="https://instagram.com/vaultfiftyfour"
+            href="https://instagram.com/vault54nyc"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative aspect-square rounded-xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all"
@@ -98,7 +98,7 @@ export const InstagramFeed: React.FC = () => {
 
       <div className="mt-6 text-center">
         <a
-          href="https://instagram.com/vaultfiftyfour"
+          href="https://instagram.com/vault54nyc"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block px-6 py-3 bg-black/30 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] rounded-lg hover:bg-black/40 hover:border-[#D4AF37]/60 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all"
