@@ -191,7 +191,7 @@ export default function App() {
           "
         >
           <img
-            src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/vault54-logo.gif"
+            src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Vault%20Logo%20and%20Artwork.gif"
             alt="VAULT54 Logo"
             className="w-64 h-auto md:w-80 lg:w-96"
           />
@@ -272,13 +272,13 @@ export default function App() {
             </a>
           </div>
 
-          {/* Work With Us Link */}
+          {/* Work With Us Button */}
           <button
             onClick={() => setIsCreatorApplicationOpen(true)}
-            className="text-white text-sm tracking-widest uppercase hover:text-white/80 transition-all underline decoration-dotted underline-offset-4 mt-2"
+            className="px-8 py-2 bg-[#D4AF37] text-black text-sm tracking-widest uppercase hover:bg-[#D4AF37]/90 transition-all rounded-lg font-semibold mt-2"
             style={{ fontFamily: 'Cormorant Garamond, serif' }}
           >
-            Work With Us
+            WORK WITH US
           </button>
         </div>
       </div>
