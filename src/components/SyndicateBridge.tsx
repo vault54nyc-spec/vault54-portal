@@ -515,7 +515,7 @@ export const SyndicateBridge: React.FC<SyndicateBridgeProps> = ({ onComplete, on
             
             <div className="absolute inset-0 z-10 flex items-center justify-center opacity-15">
               <img
-                src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/11.png"
+                src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Copy%20of%20Jersey.gif"
                 alt=""
                 className="h-full w-auto object-cover"
                 style={{ filter: 'grayscale(100%)' }}
@@ -624,7 +624,7 @@ export const SyndicateBridge: React.FC<SyndicateBridgeProps> = ({ onComplete, on
             
             <div className="absolute inset-0 z-10 flex items-center justify-center opacity-15">
               <img
-                src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/11.png"
+                src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Copy%20of%20Jersey.gif"
                 alt=""
                 className="h-full w-auto object-cover"
                 style={{ filter: 'grayscale(100%)' }}
