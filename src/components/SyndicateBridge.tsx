@@ -73,7 +73,7 @@ const SyndicateBridge = () => {
     {
       image: 'https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/10.png',
       title: 'Syndicate Nightlife Access',
-      description: 'Curated nightlife tours through the city\\'s most exclusive venues. VIP treatment everywhere you go.'
+      description: 'Curated nightlife tours through the city\'s most exclusive venues. VIP treatment everywhere you go.'
     },
     {
       image: 'https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/11.png',
@@ -929,4 +929,4 @@ const SyndicateBridge = () => {
   );
 };
 
-export default SyndicateBridge;
+export { SyndicateBridge };
