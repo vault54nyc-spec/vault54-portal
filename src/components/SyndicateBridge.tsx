@@ -719,8 +719,447 @@ export const SyndicateBridge: React.FC<SyndicateBridgeProps> = ({ onComplete, on
           </motion.div>
         );
 
-      // Continue with remaining screens (8-14) in the file...
-      // Due to character limits, I'll add them separately
+      // SCREEN 8: Syndicate Perks Grid with Carousel
+      case 8:
+        return (
+          <motion.div
+            key="screen8"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 px-4 sm:px-6 max-w-6xl w-full">
+              <motion.h2
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-3xl sm:text-4xl md:text-5xl text-white text-center mb-8"
+                style={{ 
+                  fontFamily: 'Cinzel, serif',
+                  textShadow: '0 0 40px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6)'
+                }}
+              >
+                THE SYNDICATE EXPERIENCE
+              </motion.h2>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+              >
+                {[
+                  { title: 'Rendezvous Nights', desc: 'Exclusive curated nightlife experiences' },
+                  { title: 'Private Parties', desc: 'Invitation-only small-group gatherings' },
+                  { title: 'Annual Retreat', desc: 'Luxury cabin weekend or villa trip' },
+                  { title: 'After Dark Art', desc: '"Sip & Paint After Dark" erotic art sessions' },
+                  { title: 'Masseur Services', desc: 'Professional massage at select events' },
+                  { title: 'Night Run', desc: 'Charter-driver luxury city cruise' },
+                  { title: 'Priority Access', desc: 'Guest list + zero-wait entry' },
+                  { title: 'VIP Recognition', desc: 'Badges and status icons' },
+                  { title: 'Private Forums', desc: 'Tier-restricted digital communities' },
+                  { title: 'Syndicate Channels', desc: 'Exclusive member communication' }
+                ].map((perk, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 + idx * 0.1 }}
+                    className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg p-4"
+                  >
+                    <h3 className="text-[#D4AF37] text-lg mb-1" style={{ fontFamily: 'Cinzel, serif' }}>
+                      {perk.title}
+                    </h3>
+                    <p className="text-white/80 text-sm">{perk.desc}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8 }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.4)' }}
+                onClick={() => setCurrentScreen(9)}
+                className="mt-6 mx-auto block px-12 sm:px-16 py-3 sm:py-4 bg-black/40 backdrop-blur-xl border-2 border-white/30 text-white rounded-lg tracking-widest transition-all duration-300 text-sm sm:text-base"
+              >
+                CONTINUE
+              </motion.button>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 9: Value Perception - Weekend Spending
+      case 9:
+        return (
+          <motion.div
+            key="screen9"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 px-4 sm:px-6 max-w-3xl w-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-10"
+              >
+                <h2 
+                  className="text-3xl sm:text-4xl md:text-5xl text-white text-center mb-4"
+                  style={{ 
+                    fontFamily: 'Cinzel, serif',
+                    textShadow: '0 0 30px rgba(255, 255, 255, 0.9), 0 0 15px rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  LET'S TALK VALUE
+                </h2>
+
+                <p className="text-white/70 text-center mb-8 text-sm sm:text-base">
+                  (This question refers to general nightlife spending)
+                </p>
+
+                <p className="text-white/90 text-lg sm:text-xl text-center mb-8">
+                  How much do you typically spend on a weekend night out?
+                </p>
+
+                <div className="space-y-3">
+                  {[
+                    '$100 - $300',
+                    '$300 - $500',
+                    '$500 - $1,000',
+                    '$1,000 - $2,500',
+                    '$2,500+'
+                  ].map((option, idx) => (
+                    <motion.button
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.1 }}
+                      onClick={() => setCurrentScreen(10)}
+                      className="w-full px-6 py-4 bg-black/40 backdrop-blur-xl border border-white/30 text-white rounded-lg hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 text-left"
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 10: Value Perception - Resident/Reserve Monthly
+      case 10:
+        return (
+          <motion.div
+            key="screen10"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 px-4 sm:px-6 max-w-3xl w-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-10"
+              >
+                <p className="text-white/70 text-center mb-4 text-sm">
+                  (This question refers to Monthly Membership Value Perception)
+                </p>
+
+                <p className="text-white/90 text-lg sm:text-xl text-center mb-8">
+                  What would you consider fair monthly value for Resident or Reserve membership?
+                </p>
+
+                <div className="space-y-3">
+                  {[
+                    'Under $200/month',
+                    '$200 - $400/month',
+                    '$400 - $750/month',
+                    '$750 - $1,200/month',
+                    '$1,200+/month'
+                  ].map((option, idx) => (
+                    <motion.button
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.1 }}
+                      onClick={() => setCurrentScreen(11)}
+                      className="w-full px-6 py-4 bg-black/40 backdrop-blur-xl border border-white/30 text-white rounded-lg hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 text-left"
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 11: Value Perception - Syndicate Monthly
+      case 11:
+        return (
+          <motion.div
+            key="screen11"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 px-4 sm:px-6 max-w-3xl w-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-10"
+              >
+                <p className="text-white/70 text-center mb-4 text-sm">
+                  (This question refers to The Syndicate Monthly Value Perception)
+                </p>
+
+                <p className="text-white/90 text-lg sm:text-xl text-center mb-8">
+                  What would you consider fair monthly value for The Syndicate tier?
+                </p>
+
+                <div className="space-y-3">
+                  {[
+                    'Under $500/month',
+                    '$500 - $1,000/month',
+                    '$1,000 - $2,000/month',
+                    '$2,000 - $3,500/month',
+                    '$3,500+/month'
+                  ].map((option, idx) => (
+                    <motion.button
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.1 }}
+                      onClick={() => setCurrentScreen(12)}
+                      className="w-full px-6 py-4 bg-black/40 backdrop-blur-xl border border-white/30 text-white rounded-lg hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 text-left"
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 12: Transition - Excitement Check
+      case 12:
+        return (
+          <motion.div
+            key="screen12"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 text-center px-4 sm:px-6 max-w-4xl space-y-8">
+              <motion.h2
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="text-4xl sm:text-5xl md:text-6xl text-white"
+                style={{ 
+                  fontFamily: 'Cinzel, serif',
+                  textShadow: '0 0 50px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6)'
+                }}
+              >
+                INTERESTING...
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="text-xl sm:text-2xl text-white/90 leading-relaxed"
+              >
+                So you understand the value of exclusive access.
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+                className="text-lg sm:text-xl text-[#D4AF37] italic"
+              >
+                Let's see if you're ready for what comes next...
+              </motion.p>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.6 }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.4)' }}
+                onClick={() => setCurrentScreen(13)}
+                className="mt-8 px-12 sm:px-16 py-3 sm:py-4 bg-black/40 backdrop-blur-xl border-2 border-white/30 text-white rounded-lg tracking-widest transition-all duration-300 text-sm sm:text-base"
+              >
+                I'M READY
+              </motion.button>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 13: Final Tease
+      case 13:
+        return (
+          <motion.div
+            key="screen13"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 text-center px-4 sm:px-6 max-w-4xl space-y-8">
+              <motion.h2
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-4xl sm:text-5xl md:text-6xl text-white"
+                style={{ 
+                  fontFamily: 'Cinzel, serif',
+                  textShadow: '0 0 40px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6)'
+                }}
+              >
+                THE DOOR IS OPEN
+              </motion.h2>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="space-y-6 text-white/90 leading-relaxed bg-black/40 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-10 text-base sm:text-lg"
+              >
+                <p>
+                  You've seen what most never will.
+                </p>
+                
+                <p>
+                  The experiences. The access. The community of men who understand that life's greatest pleasures exist beyond the velvet rope.
+                </p>
+                
+                <p className="text-[#D4AF37] italic">
+                  But seeing is not the same as experiencing.
+                </p>
+                
+                <p>
+                  If you're ready to step through the door, the application awaits.
+                </p>
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(212, 175, 55, 0.6)' }}
+                onClick={() => setCurrentScreen(14)}
+                className="mt-8 px-12 sm:px-16 py-3 sm:py-4 bg-[#D4AF37]/20 backdrop-blur-xl border-2 border-[#D4AF37] text-white rounded-lg tracking-widest transition-all duration-300 text-sm sm:text-base"
+              >
+                BEGIN APPLICATION
+              </motion.button>
+            </div>
+          </motion.div>
+        );
+
+      // SCREEN 14: Application Handoff
+      case 14:
+        return (
+          <motion.div
+            key="screen14"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.8 }}
+            className="min-h-screen w-full flex items-center justify-center relative py-8 sm:py-12 px-4"
+          >
+            <SmokeBackground />
+            
+            <div className="relative z-20 text-center px-4 sm:px-6 max-w-4xl space-y-8">
+              <motion.h2
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="text-4xl sm:text-5xl md:text-6xl text-white"
+                style={{ 
+                  fontFamily: 'Cinzel, serif',
+                  textShadow: '0 0 50px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6)'
+                }}
+              >
+                WELCOME TO THE BEGINNING
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="text-lg sm:text-xl text-white/90 leading-relaxed"
+              >
+                Your journey into VAULT54 starts with a simple application.
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.0 }}
+                className="text-base sm:text-lg text-white/70"
+              >
+                We'll review your submission and be in touch within 48 hours.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center mt-12"
+              >
+                <button
+                  onClick={onAccept}
+                  className="px-12 sm:px-16 py-3 sm:py-4 bg-[#D4AF37]/20 backdrop-blur-xl border-2 border-[#D4AF37] text-white rounded-lg tracking-widest hover:bg-[#D4AF37]/40 hover:shadow-[0_0_40px_rgba(212,175,55,0.6)] transition-all duration-300 text-sm sm:text-base"
+                >
+                  APPLY NOW
+                </button>
+                
+                <button
+                  onClick={onDecline}
+                  className="px-12 sm:px-16 py-3 sm:py-4 bg-black/40 backdrop-blur-xl border-2 border-white/30 text-white rounded-lg tracking-widest hover:bg-black/60 transition-all duration-300 text-sm sm:text-base"
+                >
+                  NOT YET
+                </button>
+              </motion.div>
+            </div>
+          </motion.div>
+        );
       
       default:
         return null;
