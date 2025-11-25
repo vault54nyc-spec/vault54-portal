@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { X } from 'lucide-react';
+import { CompleteAdminDashboard } from './components/CompleteAdminDashboard';
+import { SyndicateBridge } from './components/SyndicateBridge';
+import { MemberPortal } from './components/MemberPortal';
+import { DramaticTransition } from './components/DramaticTransition';
+import { GoldParticles } from './components/GoldParticles';
+import { InvestorPortal } from './components/InvestorPortal';
 import { FrostedGlassButton } from './components/FrostedGlassButton';
 import { FrostedGlassModal } from './components/FrostedGlassModal';
 import { ApplicationModal } from './components/ApplicationModal';
-import { InvestorPortal } from './components/InvestorPortal';
-import { AdminDashboard } from './components/AdminDashboard';
-import { MemberPortal } from './components/MemberPortal';
 import { ContentCreatorApplication } from './components/ContentCreatorApplication';
-import { GoldParticles } from './components/GoldParticles';
 import ColorVariations from './ColorVariations';
+import './styles/globals.css';
 
 export default function App() {
   const [showColorDemo, setShowColorDemo] = useState(false);
@@ -25,6 +30,9 @@ export default function App() {
   const [totalMembers] = useState(12); // Mock data - will come from backend
   const [totalApplicants] = useState(28); // Mock data - will come from backend
   const [skipApplicationNDA, setSkipApplicationNDA] = useState(false); // Track if coming from Syndicate
+  const [syndicateData, setSyndicateData] = useState<{ weekendSpending: string; membershipValuePerception: string } | null>(null);
+  const [showTransition, setShowTransition] = useState(false);
+  const [transitionTarget, setTransitionTarget] = useState<'investor-portal' | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -117,7 +125,7 @@ export default function App() {
 
   // Admin Dashboard Screen
   if (currentScreen === 'admin-dashboard') {
-    return <AdminDashboard onLogout={() => setCurrentScreen('landing')} />;
+    return <CompleteAdminDashboard onLogout={() => setCurrentScreen('landing')} />;
   }
 
   // Investor Portal Screen
@@ -125,8 +133,9 @@ export default function App() {
     return (
       <InvestorPortal 
         onLogout={() => setCurrentScreen('landing')} 
-        onBridgeComplete={() => {
-          // User completed Syndicate Bridge, open Application Modal and skip NDA
+        onBridgeComplete={(data) => {
+          // User completed Syndicate Bridge, save data and open Application Modal, skip NDA
+          setSyndicateData(data);
           setSkipApplicationNDA(true);
           setCurrentScreen('landing');
           setIsApplicationModalOpen(true);
@@ -158,8 +167,8 @@ export default function App() {
             playsInline
             src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/Copy%20of%20Jersey.mp4"
           />
-          {/* Frosted overlay over video */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[3px]" />
+          {/* Frosted overlay over video - Darkened */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-[3px]" />
         </>
       ) : (
         <>
@@ -174,26 +183,43 @@ export default function App() {
             />
           </div>
           {/* Frosted overlay - Darkened */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
         </>
       )}
 
       {/* Centered content */}
       <div className="relative h-full flex flex-col items-center justify-center gap-8 px-4">
-        {/* Logo with golden glow on hover */}
+        {/* Logo with white glow on hover */}
         <button
           onClick={() => setIsAccessModalOpen(true)}
           className="
             transition-all duration-500 ease-out
-            hover:drop-shadow-[0_0_30px_rgba(212,175,55,0.6)]
+            hover:drop-shadow-[0_0_50px_rgba(255,255,255,0.9)]
+            hover:brightness-110
             focus:outline-none
             cursor-pointer
+            relative
+            group
           "
+          style={{
+            filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.4))'
+          }}
         >
           <img
             src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Vault%20Logo%20and%20Artwork.gif"
             alt="VAULT54 Logo"
-            className="w-64 h-auto md:w-80 lg:w-96"
+            className="w-64 h-auto md:w-80 lg:w-96 transition-all duration-500"
+            style={{
+              filter: 'brightness(1)'
+            }}
+          />
+          {/* Glow overlay on hover */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, transparent 70%)',
+              filter: 'blur(25px)'
+            }}
           />
         </button>
 
@@ -236,7 +262,7 @@ export default function App() {
               </svg>
             </a>
             <a
-              href="https://instagram.com/vault54nyc"
+              href="https://instagram.com/vaultfiftyfour"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
@@ -260,7 +286,7 @@ export default function App() {
               </svg>
             </a>
             <a
-              href="https://x.com/Vaultfiftyfour"
+              href="https://x.com/Vault54NYC"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
@@ -272,13 +298,13 @@ export default function App() {
             </a>
           </div>
 
-          {/* Work With Us Button */}
+          {/* Work With Us Link */}
           <button
             onClick={() => setIsCreatorApplicationOpen(true)}
-            className="px-8 py-2 bg-[#D4AF37] text-black text-sm tracking-widest uppercase hover:bg-[#D4AF37]/90 transition-all rounded-lg font-semibold mt-2"
+            className="text-white text-sm tracking-widest uppercase hover:text-white/80 transition-all underline decoration-dotted underline-offset-4 mt-2"
             style={{ fontFamily: 'Cormorant Garamond, serif' }}
           >
-            WORK WITH US
+            Work With Us
           </button>
         </div>
       </div>
@@ -335,9 +361,10 @@ export default function App() {
                   setCurrentScreen('member-portal');
                   setIsAccessModalOpen(false);
                 } else if (code === 'investor123') {
-                  // Investor code - opens Syndicate Bridge flow
-                  setCurrentScreen('investor-portal');
+                  // Investor code - trigger dramatic transition
                   setIsAccessModalOpen(false);
+                  setShowTransition(true);
+                  setTransitionTarget('investor-portal');
                 } else {
                   alert('Invalid access code');
                 }
@@ -354,12 +381,26 @@ export default function App() {
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
         skipNDA={skipApplicationNDA}
+        syndicateData={syndicateData}
       />
 
       {/* Content Creator Application Modal */}
       {isCreatorApplicationOpen && (
         <ContentCreatorApplication onClose={() => setIsCreatorApplicationOpen(false)} />
       )}
+
+      {/* Dramatic Transition Effect */}
+      <DramaticTransition
+        isActive={showTransition}
+        logoSrc="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Vault%20Logo%20and%20Artwork.gif"
+        onComplete={() => {
+          setShowTransition(false);
+          if (transitionTarget) {
+            setCurrentScreen(transitionTarget);
+            setTransitionTarget(null);
+          }
+        }}
+      />
 
       {/* Import fonts and animations */}
       <style>{`
