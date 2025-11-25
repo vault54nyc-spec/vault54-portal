@@ -760,8 +760,15 @@ export const SyndicateBridge: React.FC<SyndicateBridgeProps> = ({ onComplete, on
         )}
       </AnimatePresence>
 
-      {/* Bottom Screen Counter */}
-      <div className="fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 px-4">
+      {/* Bottom Navigation Bar */}
+      <div className="fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-4 px-4">
+        <button
+          onClick={() => currentScreen === 1 ? onDecline() : setCurrentScreen(currentScreen - 1)}
+          className="px-4 sm:px-6 py-2 sm:py-3 bg-black/80 backdrop-blur-xl border border-white/30 text-white rounded-lg transition-all duration-300 hover:bg-[#D4AF37]/30 hover:border-[#D4AF37]/80 text-xs sm:text-base"
+        >
+          {currentScreen === 1 ? 'EXIT' : '← BACK'}
+        </button>
+
         <div className="px-4 sm:px-6 py-2 sm:py-3 bg-black/80 backdrop-blur-xl border border-white/30 rounded-lg text-[#D4AF37] text-xs sm:text-base whitespace-nowrap">
           Screen {currentScreen} of {totalScreens}
         </div>
