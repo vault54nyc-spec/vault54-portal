@@ -173,7 +173,7 @@ export const SyndicateBridge: React.FC<SyndicateBridgeProps> = ({ onComplete, on
                 className="w-full max-w-4xl mx-auto"
               >
                 <img 
-                  src={videoPlaceholder}
+                  src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Copy%20of%20Jersey.gif"
                   alt="Cinematic Video Placeholder"
                   className="w-full h-auto rounded-3xl border-2 border-[#D4AF37]/50 shadow-[0_0_50px_rgba(212,175,55,0.3)]"
                 />
