@@ -392,8 +392,8 @@ export default function App() {
                   // Test member portal access code
                   setCurrentScreen('member-portal');
                   setIsAccessModalOpen(false);
-                } else if (code === 'investor123') {
-                  // Investor code - trigger dramatic transition
+                } else if (code === 'syndicate123') {
+                  // Syndicate code - trigger dramatic transition
                   setIsAccessModalOpen(false);
                   setShowTransition(true);
                   setTransitionTarget('investor-portal');
