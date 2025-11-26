@@ -6,10 +6,11 @@ import { SyndicateBridge } from './SyndicateBridge';
 
 interface InvestorPortalProps {
   onLogout: () => void;
-  onBridgeComplete: () => void;
+  onBridgeComplete: (data: { weekendSpending: string; membershipValuePerception: string }) => void;
+  testMode?: boolean; // Allow bypassing code requirements in testing
 }
 
-export const InvestorPortal: React.FC<InvestorPortalProps> = ({ onLogout, onBridgeComplete }) => {
+export const InvestorPortal: React.FC<InvestorPortalProps> = ({ onLogout, onBridgeComplete, testMode = false }) => {
   const [showIntroVideo, setShowIntroVideo] = useState(true);
   const [ndaSigned, setNdaSigned] = useState(false);
   const [ndaScrolled, setNdaScrolled] = useState(false);
@@ -59,13 +60,10 @@ export const InvestorPortal: React.FC<InvestorPortalProps> = ({ onLogout, onBrid
   if (showIntroVideo) {
     return (
       <div className="fixed inset-0 bg-[#1a1a1a]">
-        <video
-          ref={videoRef}
+        <img
+          src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Copy%20of%20Jersey.gif"
+          alt="Vault54"
           className="w-full h-full object-cover"
-          autoPlay
-          playsInline
-          loop
-          src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/Copy%20of%20Jersey.mp4"
         />
         <button
           onClick={() => {
@@ -80,9 +78,23 @@ export const InvestorPortal: React.FC<InvestorPortalProps> = ({ onLogout, onBrid
     );
   }
 
-  if (!ndaSigned) {
+  if (!ndaSigned && !testMode) {
     return (
       <div className="fixed inset-0 bg-[#1a1a1a] text-white overflow-y-auto" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+        {/* Top Navigation with Back Button */}
+        <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-[#D4AF37]/30 px-4 md:px-8 py-4">
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-2 text-white/70 hover:text-[#D4AF37] transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m12 19-7-7 7-7"/>
+              <path d="M19 12H5"/>
+            </svg>
+            <span style={{ fontFamily: 'Inter, sans-serif' }}>Back</span>
+          </button>
+        </div>
+
         <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
           <div className="max-w-4xl w-full">
             <div className="bg-white/5 backdrop-blur-xl border border-[#D4AF37]/40 rounded-2xl p-4 md:p-8">

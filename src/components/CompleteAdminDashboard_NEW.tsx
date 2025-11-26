@@ -42,10 +42,9 @@ import { AboutVault54 } from './AboutVault54';
 
 interface CompleteAdminDashboardProps {
   onLogout: () => void;
-  testMode?: boolean; // Allow bypassing code requirements in testing
 }
 
-export const CompleteAdminDashboard: React.FC<CompleteAdminDashboardProps> = ({ onLogout, testMode = false }) => {
+export const CompleteAdminDashboard: React.FC<CompleteAdminDashboardProps> = ({ onLogout }) => {
   const [activeView, setActiveView] = useState('god-mode');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [selectedMember, setSelectedMember] = useState<any>(null);
@@ -392,6 +391,7 @@ export const CompleteAdminDashboard: React.FC<CompleteAdminDashboardProps> = ({ 
               { id: 'activity', label: 'Live Member Activity', icon: Eye },
               { id: 'complaints', label: 'Member Feedback', icon: MessageSquare },
               { id: 'templates', label: 'Template Editor', icon: Mail },
+              { id: 'about', label: 'About VAULT54 Page', icon: FileText },
               { id: 'cms', label: 'Site CMS', icon: FileText },
               { id: 'feed', label: 'Feed Control', icon: Megaphone },
               { id: 'security', label: 'Security & Access', icon: Shield },
@@ -651,7 +651,7 @@ export const CompleteAdminDashboard: React.FC<CompleteAdminDashboardProps> = ({ 
           )}
 
           {/* Other views - using placeholder for brevity */}
-          {!['applications', 'members', 'god-mode'].includes(activeView) && (
+          {!['applications', 'members', 'god-mode', 'about'].includes(activeView) && (
             <div className="flex items-center justify-center h-full">
               <p className="text-white/40 text-base md:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
                 View: {activeView}

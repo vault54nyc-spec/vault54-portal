@@ -6,12 +6,14 @@ interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
   skipNDA?: boolean;
+  syndicateData?: { weekendSpending: string; membershipValuePerception: string } | null;
 }
 
 export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   isOpen,
   onClose,
   skipNDA = false,
+  syndicateData = null,
 }) => {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -23,6 +25,16 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   const [profession, setProfession] = useState('');
   const [instagram, setInstagram] = useState('');
   const [referralCode, setReferralCode] = useState('');
+  
+  // Validation errors
+  const [errors, setErrors] = useState<{
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    profession?: string;
+    instagram?: string;
+    dob?: string;
+  }>({});
   
   // Step 2 - NDA
   const [ndaScrolled, setNdaScrolled] = useState(false);
@@ -87,6 +99,112 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
   const isOfAge = dob ? calculateAge(dob) >= 21 : false;
 
+  // VALIDATION FUNCTIONS
+  const validateEmail = (email: string): string | null => {
+    if (!email) return 'Email is required';
+    if (!email.includes('@')) return 'Email must contain @';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return 'Please enter a valid email address (e.g., name@domain.com)';
+    if (email.length < 5) return 'Email is too short';
+    if (email.length > 100) return 'Email is too long';
+    return null;
+  };
+
+  const validatePhone = (phone: string): string | null => {
+    if (!phone) return 'Phone number is required';
+    // Remove all non-digit characters for validation
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length < 10) return 'Phone number must be at least 10 digits';
+    if (digitsOnly.length > 15) return 'Phone number is too long';
+    // Check if it's a valid format (allows various formats)
+    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+    if (!phoneRegex.test(phone)) return 'Phone number contains invalid characters';
+    return null;
+  };
+
+  const validateFullName = (name: string): string | null => {
+    if (!name) return 'Full name is required';
+    if (name.trim().length < 2) return 'Name is too short';
+    if (name.trim().length > 100) return 'Name is too long';
+    // Check for at least first and last name (two words)
+    const nameParts = name.trim().split(/\s+/);
+    if (nameParts.length < 2) return 'Please enter both first and last name';
+    // Check for numbers in name
+    if (/\d/.test(name)) return 'Name cannot contain numbers';
+    // Check for special characters (allow hyphens, apostrophes, and spaces)
+    if (!/^[a-zA-Z\s\-']+$/.test(name)) return 'Name contains invalid characters';
+    return null;
+  };
+
+  const validateInstagram = (handle: string): string | null => {
+    if (!handle) return 'Instagram handle is required';
+    // Remove @ if present
+    const cleanHandle = handle.replace('@', '');
+    if (cleanHandle.length < 1) return 'Instagram handle is required';
+    if (cleanHandle.length > 30) return 'Instagram handle is too long';
+    // Instagram usernames can only contain letters, numbers, periods, and underscores
+    const instagramRegex = /^[a-zA-Z0-9._]+$/;
+    if (!instagramRegex.test(cleanHandle)) return 'Instagram handle can only contain letters, numbers, periods, and underscores';
+    if (cleanHandle.startsWith('.') || cleanHandle.endsWith('.')) return 'Instagram handle cannot start or end with a period';
+    if (cleanHandle.includes('..')) return 'Instagram handle cannot have consecutive periods';
+    return null;
+  };
+
+  const validateProfession = (profession: string): string | null => {
+    if (!profession || profession === '') return 'Please select your profession';
+    return null;
+  };
+
+  const validateDOB = (dob: string): string | null => {
+    if (!dob) return 'Date of birth is required';
+    const birthDate = new Date(dob);
+    const today = new Date();
+    // Check if date is valid
+    if (isNaN(birthDate.getTime())) return 'Please enter a valid date';
+    // Check if date is not in the future
+    if (birthDate > today) return 'Date of birth cannot be in the future';
+    // Check if person is at least 21
+    const age = calculateAge(dob);
+    if (age < 21) return `You must be at least 21 years old (currently ${age} years old)`;
+    // Check if age is reasonable (not over 100)
+    if (age > 100) return 'Please enter a valid date of birth';
+    return null;
+  };
+
+  // Validate Step 1 before continuing
+  const validateStep1 = (): boolean => {
+    const newErrors: typeof errors = {};
+    
+    const nameError = validateFullName(fullName);
+    if (nameError) newErrors.fullName = nameError;
+    
+    const emailError = validateEmail(email);
+    if (emailError) newErrors.email = emailError;
+    
+    const phoneError = validatePhone(phone);
+    if (phoneError) newErrors.phone = phoneError;
+    
+    const professionError = validateProfession(profession);
+    if (professionError) newErrors.profession = professionError;
+    
+    const instagramError = validateInstagram(instagram);
+    if (instagramError) newErrors.instagram = instagramError;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Validate Step 4 (DOB) before submitting
+  const validateStep4 = (): boolean => {
+    const newErrors: typeof errors = {};
+    
+    const dobError = validateDOB(dob);
+    if (dobError) newErrors.dob = dobError;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const canContinueStep1 = fullName && email && phone && profession && instagram && instagramVerified;
   const canContinueStep2 = ndaRead && ndaAccepted;
   const canContinueStep3 = visionRead && visionAccepted;
@@ -98,17 +216,25 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
       return;
     }
     
-    // Send notification email
-    console.log('Sending application notification to vault54nyc@gmail.com');
-    console.log('Application data:', {
-      fullName,
-      email,
-      phone,
-      profession,
-      instagram,
-      dob,
-      age: calculateAge(dob)
-    });
+    // TODO: Send application data to backend API
+    // const applicationData = {
+    //   fullName,
+    //   email,
+    //   phone,
+    //   profession,
+    //   instagram,
+    //   dob,
+    //   age: calculateAge(dob),
+    //   ...(syndicateData && {
+    //     weekendSpending: syndicateData.weekendSpending,
+    //     membershipValuePerception: syndicateData.membershipValuePerception,
+    //     source: 'Syndicate Bridge'
+    //   })
+    // };
+    // await fetch('/api/applications', {
+    //   method: 'POST',
+    //   body: JSON.stringify(applicationData)
+    // });
     
     setSubmitted(true);
   };
@@ -117,17 +243,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/VAULT54 UI.mp4" type="video/mp4" />
-      </video>
-      {/* Backdrop Overlay */}
+      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
@@ -175,44 +291,87 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Full Name (Required)</label>
+                      <label className="block text-white/90 mb-2">Full Name (Required)</label>
                       <input
                         type="text"
                         value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        onChange={(e) => {
+                          setFullName(e.target.value);
+                          // Clear error when user starts typing
+                          if (errors.fullName) {
+                            setErrors({ ...errors, fullName: undefined });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 bg-black/40 backdrop-blur-md border rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all ${
+                          errors.fullName
+                            ? 'border-red-500/70 focus:border-red-500/90'
+                            : 'border-[#D4AF37]/30 focus:border-[#D4AF37]/50'
+                        }`}
+                        placeholder="John Doe"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
+                      {errors.fullName && <p className="text-red-400 text-sm mt-2">❌ {errors.fullName}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Email Address (Required)</label>
+                      <label className="block text-white/90 mb-2">Email Address (Required)</label>
                       <input
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (errors.email) {
+                            setErrors({ ...errors, email: undefined });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 bg-black/40 backdrop-blur-md border rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all ${
+                          errors.email
+                            ? 'border-red-500/70 focus:border-red-500/90'
+                            : 'border-[#D4AF37]/30 focus:border-[#D4AF37]/50'
+                        }`}
+                        placeholder="name@domain.com"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
+                      {errors.email && <p className="text-red-400 text-sm mt-2">❌ {errors.email}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Phone Number (Required)</label>
+                      <label className="block text-white/90 mb-2">Phone Number (Required)</label>
                       <input
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          if (errors.phone) {
+                            setErrors({ ...errors, phone: undefined });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 bg-black/40 backdrop-blur-md border rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all ${
+                          errors.phone
+                            ? 'border-red-500/70 focus:border-red-500/90'
+                            : 'border-[#D4AF37]/30 focus:border-[#D4AF37]/50'
+                        }`}
+                        placeholder="+1 (555) 123-4567"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
+                      {errors.phone && <p className="text-red-400 text-sm mt-2">❌ {errors.phone}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Profession / Industry (Required)</label>
+                      <label className="block text-white/90 mb-2">Profession / Industry (Required)</label>
                       <select
                         value={profession}
-                        onChange={(e) => setProfession(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        onChange={(e) => {
+                          setProfession(e.target.value);
+                          if (errors.profession) {
+                            setErrors({ ...errors, profession: undefined });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 bg-black/40 backdrop-blur-md border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all ${
+                          errors.profession
+                            ? 'border-red-500/70 focus:border-red-500/90'
+                            : 'border-[#D4AF37]/30 focus:border-[#D4AF37]/50'
+                        }`}
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       >
                         <option value="">Select your profession</option>
@@ -229,56 +388,70 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         <option value="Education">Education</option>
                         <option value="Other">Other</option>
                       </select>
+                      {errors.profession && <p className="text-red-400 text-sm mt-2">❌ {errors.profession}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Instagram Handle (Required)</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={instagram}
-                          onChange={(e) => {
-                            setInstagram(e.target.value);
-                            setInstagramVerified(false);
-                          }}
-                          placeholder="@username"
-                          className="flex-1 px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
-                          style={{ fontFamily: 'Cormorant Garamond, serif' }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (instagram) {
-                              window.open(`https://instagram.com/${instagram.replace('@', '')}`, '_blank');
-                              // In production, this would integrate with Instagram API
-                              // For now, simulate verification after opening
-                              setTimeout(() => {
-                                const confirmed = window.confirm('Have you confirmed this is your Instagram profile?');
-                                if (confirmed) {
-                                  setInstagramVerified(true);
-                                  alert('Instagram verified! ✓');
-                                }
-                              }, 2000);
-                            }
-                          }}
-                          className={`px-4 py-3 backdrop-blur-md border rounded-lg transition-all ${
-                            instagramVerified
-                              ? 'bg-green-500/20 border-green-500/40 text-green-400'
-                              : 'bg-black/60 border-[#D4AF37]/30 text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)]'
-                          }`}
-                        >
-                          {instagramVerified ? '✓ Verified' : 'Verify'}
-                        </button>
+                      <label className="block text-white/90 mb-2">Instagram Handle (Required)</label>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={instagram}
+                            onChange={(e) => {
+                              setInstagram(e.target.value);
+                              setInstagramVerified(false);
+                              if (errors.instagram) {
+                                setErrors({ ...errors, instagram: undefined });
+                              }
+                            }}
+                            placeholder="@username"
+                            className={`flex-1 px-4 py-3 bg-black/40 backdrop-blur-md border rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all ${
+                              errors.instagram
+                                ? 'border-red-500/70 focus:border-red-500/90'
+                                : 'border-[#D4AF37]/30 focus:border-[#D4AF37]/50'
+                            }`}
+                            style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const validationError = validateInstagram(instagram);
+                              if (validationError) {
+                                setErrors({ ...errors, instagram: validationError });
+                                return;
+                              }
+                              if (instagram) {
+                                window.open(`https://instagram.com/${instagram.replace('@', '')}`, '_blank');
+                                setTimeout(() => {
+                                  const confirmed = window.confirm('Have you confirmed this is your Instagram profile?');
+                                  if (confirmed) {
+                                    setInstagramVerified(true);
+                                    alert('Instagram verified! ✓');
+                                  }
+                                }, 2000);
+                              }
+                            }}
+                            className={`px-4 py-3 backdrop-blur-md border rounded-lg transition-all whitespace-nowrap ${
+                              instagramVerified
+                                ? 'bg-green-500/20 border-green-500/40 text-green-400'
+                                : 'bg-black/60 border-[#D4AF37]/30 text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)]'
+                            }`}
+                          >
+                            {instagramVerified ? '✓ Verified' : 'Verify'}
+                          </button>
+                        </div>
+                        {errors.instagram && <p className="text-red-400 text-sm">❌ {errors.instagram}</p>}
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Referral Code (Optional)</label>
+                      <label className="block text-white/90 mb-2">Referral Code (Optional)</label>
                       <input
                         type="text"
                         value={referralCode}
                         onChange={(e) => setReferralCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white font-medium placeholder:text-white/50 text-base focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
+                        className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
                     </div>
@@ -286,7 +459,11 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
                   <div className="flex justify-center">
                     <FrostedGlassButton
-                      onClick={() => setStep(2)}
+                      onClick={() => {
+                        if (validateStep1()) {
+                          setStep(2);
+                        }
+                      }}
                       className={`${!canContinueStep1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       Continue to NDA →
@@ -305,7 +482,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <div
                     ref={ndaRef}
                     onScroll={handleNdaScroll}
-                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white space-y-4 text-base leading-relaxed"
+                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white/80 space-y-4"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}
                   >
                     <h3 className="text-white">CONFIDENTIALITY AND NON-DISCLOSURE AGREEMENT</h3>
@@ -393,14 +570,6 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
               {/* STEP 3: Vision & Expectations */}
               {step === 3 && (
                 <div className="space-y-6">
-                  {/* Animated Logo */}
-                  <div className="flex justify-center mb-4">
-                    <img 
-                      src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/vault54-logo.gif" 
-                      alt="VAULT54 Logo" 
-                      className="h-24 w-auto"
-                    />
-                  </div>
                   <h2 className="text-white text-center text-3xl drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                     Step 3 of 4: About VAULT54
                   </h2>
@@ -408,7 +577,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <div
                     ref={visionRef}
                     onScroll={handleVisionScroll}
-                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white space-y-4 text-base leading-relaxed"
+                    className="h-64 overflow-y-auto p-4 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white/80 space-y-4"
                     style={{ fontFamily: 'Cormorant Garamond, serif' }}
                   >
                     <h3 className="text-white">OUR VISION</h3>
@@ -496,7 +665,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Face Photo (Required)</label>
+                      <label className="block text-white/90 mb-2">Face Photo (Required)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -506,7 +675,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Full Body Photo (Required)</label>
+                      <label className="block text-white/90 mb-2">Full Body Photo (Required)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -516,7 +685,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Additional Photo (Optional)</label>
+                      <label className="block text-white/90 mb-2">Additional Photo (Optional)</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -526,7 +695,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-white font-semibold mb-2 text-base">Date of Birth (Required)</label>
+                      <label className="block text-white/90 mb-2">Date of Birth (Required)</label>
                       <input
                         type="date"
                         value={dob}
@@ -535,6 +704,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         className="w-full px-4 py-3 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30 rounded-lg text-white focus:outline-none focus:border-[#D4AF37]/50 focus:ring-2 focus:ring-[#D4AF37]/20 focus:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all"
                         style={{ fontFamily: 'Cormorant Garamond, serif' }}
                       />
+                      {errors.dob && <p className="text-red-400 text-sm mt-2">{errors.dob}</p>}
                       {dob && !isOfAge && (
                         <p className="text-red-400 text-sm mt-2">You must be at least 21 years old to apply.</p>
                       )}
@@ -588,7 +758,11 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
                       ← Back
                     </FrostedGlassButton>
                     <FrostedGlassButton
-                      onClick={handleSubmit}
+                      onClick={() => {
+                        if (validateStep4()) {
+                          handleSubmit();
+                        }
+                      }}
                       className={`${!canSubmitStep4 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       Submit Application

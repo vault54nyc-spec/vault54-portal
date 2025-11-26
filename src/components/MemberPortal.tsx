@@ -11,10 +11,10 @@ import { InstagramFeed } from './InstagramFeed';
 import { NewsFeed } from './NewsFeed';
 import { NewsletterSignup } from './NewsletterSignup';
 import { ConfirmationModal } from './ConfirmationModal';
-import { MemberGallery } from './media/MemberGallery';
 
 interface MemberPortalProps {
   onLogout: () => void;
+  testMode?: boolean; // Allow bypassing code requirements in testing
 }
 
 interface Event {
@@ -29,9 +29,11 @@ interface Event {
   image: string;
 }
 
-export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
+export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout, testMode }) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [confirmationModal, setConfirmationModal] = useState<{ isOpen: boolean; message: string; title?: string; type?: 'info' | 'success' | 'error' } | null>(null);
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [complaintType, setComplaintType] = useState('feedback');
   const memberNumber = 'V54-M001';
   const referralCode = 'VLT-R' + Math.floor(Math.random() * 9000 + 1000);
 
@@ -407,14 +409,23 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
             Newsletter Signup
           </h2>
           <NewsletterSignup />
-        
-      {/* Members Gallery Section */}
-      <section className="space-y-6">
-        <div className="bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 rounded-2xl p-8">
-          <MemberGallery />
-        </div>
-      </section>
-</section>
+        </section>
+
+        {/* Submit Feedback/Complaint */}
+        <section className="mb-12">
+          <div className="bg-gradient-to-br from-[#D4AF37]/10 to-[#167D7F]/10 border border-[#D4AF37]/30 rounded-xl p-6 md:p-8 text-center">
+            <h3 className="text-2xl md:text-3xl text-[#D4AF37] mb-4">Have Feedback or Concerns?</h3>
+            <p className="text-gray-300 mb-6">
+              We value your input. Share your thoughts, suggestions, or concerns with our team.
+            </p>
+            <button
+              onClick={() => setShowComplaintModal(true)}
+              className="px-8 py-4 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-white rounded-lg transition-all duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] uppercase tracking-wider"
+            >
+              📝 Submit Feedback
+            </button>
+          </div>
+        </section>
       </div>
 
       {/* Event Detail Modal */}
@@ -491,6 +502,99 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onLogout }) => {
           title={confirmationModal.title}
           onClose={() => setConfirmationModal(null)}
         />
+      )}
+
+      {/* Complaint/Feedback Modal */}
+      {showComplaintModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-black/90 border border-[#D4AF37]/40 rounded-2xl p-6 md:p-8 max-w-2xl w-full">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl md:text-3xl text-[#D4AF37]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                Submit Feedback
+              </h2>
+              <button
+                onClick={() => setShowComplaintModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white/70 mb-2 text-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  Type of Submission
+                </label>
+                <select
+                  value={complaintType}
+                  onChange={(e) => setComplaintType(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4AF37]/50"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                >
+                  <option value="feedback">💡 Feedback/Suggestion</option>
+                  <option value="complaint">⚠️ Complaint/Concern</option>
+                  <option value="question">❓ Question</option>
+                  <option value="praise">⭐ Praise/Compliment</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-white/70 mb-2 text-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  placeholder="Brief summary of your message..."
+                  className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#D4AF37]/50"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-white/70 mb-2 text-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  Message
+                </label>
+                <textarea
+                  rows={6}
+                  placeholder="Share your thoughts with us..."
+                  className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#D4AF37]/50 resize-none"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                />
+              </div>
+
+              <div className="p-4 bg-blue-500/10 border border-blue-400/30 rounded-lg">
+                <p className="text-blue-400 text-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+                  💬 Your feedback is confidential and will be reviewed by our leadership team within 24-48 hours.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowComplaintModal(false)}
+                  className="flex-1 py-3 bg-white/5 border border-white/20 rounded-lg hover:bg-white/10 transition-all"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowComplaintModal(false);
+                    setConfirmationModal({
+                      isOpen: true,
+                      message: '✓ Your feedback has been submitted successfully!\n\nThank you for helping us improve VAULT54.',
+                      title: 'Feedback Submitted',
+                      type: 'success'
+                    });
+                  }}
+                  className="flex-1 py-3 bg-[#D4AF37] text-black rounded-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all"
+                  style={{ fontFamily: 'Cormorant Garamond, serif' }}
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       </div>
     </div>
