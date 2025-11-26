@@ -36,7 +36,7 @@ export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   
-  // Test mode - set to FALSE for production (passwords/authentication active)
+  // Test mode - set to true for development, false for production
   const TEST_MODE = false;
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function App() {
       
       // Ensure video plays on mount
       const playVideo = async () => {
-        try => {
+        try {
           await video.play();
         } catch (error) {
           console.log('Autoplay prevented, user interaction required');
@@ -101,29 +101,24 @@ export default function App() {
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
+          autoPlay
           muted={isMuted}
           playsInline
           src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/Copy%20of%20Jersey.mp4"
         />
-        
-        {/* Mute/Unmute Toggle */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="fixed bottom-8 left-8 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/40 text-white rounded-lg hover:bg-black/80 hover:border-white/60 transition-all z-50"
-          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+          className="absolute bottom-8 left-8 px-4 md:px-6 py-2 md:py-3 bg-black/50 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] rounded-lg hover:bg-black/60 hover:border-[#D4AF37]/80 transition-all text-sm md:text-base"
         >
           {isMuted ? '🔇 UNMUTE' : '🔊 MUTE'}
         </button>
-
-        {/* Skip Button */}
         <button
           onClick={() => {
             localStorage.setItem('vault54IntroSeen', 'true');
             setHasSeenIntro(true);
             setCurrentScreen('landing');
           }}
-          className="fixed bottom-8 right-8 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/40 text-white rounded-lg hover:bg-black/80 hover:border-white/60 transition-all z-50"
-          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+          className="absolute bottom-8 right-8 px-4 md:px-6 py-2 md:py-3 bg-black/50 backdrop-blur-xl border border-[#D4AF37]/40 text-[#D4AF37] rounded-lg hover:bg-black/60 hover:border-[#D4AF37]/80 transition-all text-sm md:text-base"
         >
           SKIP
         </button>
@@ -133,7 +128,7 @@ export default function App() {
 
   // Admin Dashboard Screen
   if (currentScreen === 'admin-dashboard') {
-    return <CompleteAdminDashboard onLogout={() => setCurrentScreen('landing')} />;
+    return <CompleteAdminDashboard onLogout={() => setCurrentScreen('landing')} testMode={TEST_MODE} />;
   }
 
   // Investor Portal Screen
@@ -158,18 +153,21 @@ export default function App() {
     return <MemberPortal onLogout={() => setCurrentScreen('landing')} testMode={TEST_MODE} />;
   }
 
-  // SCREEN 2: Landing Page
+  // SCREEN 2: Main Landing Page
   return (
-    <div className="fixed inset-0">
-      {/* Background Video or Fallback */}
+    <div className="fixed inset-0 overflow-hidden">
+      {/* Gold Particles */}
+      <GoldParticles />
+
+      {/* Video Background (after first view) or Animated Image Background (fallback) */}
       {hasSeenIntro ? (
         <>
           <video
             ref={backgroundVideoRef}
             className="absolute inset-0 w-full h-full object-cover"
             autoPlay
-            loop
             muted
+            loop
             playsInline
             src="https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/Copy%20of%20Jersey.mp4"
           />
@@ -178,9 +176,15 @@ export default function App() {
         </>
       ) : (
         <>
-          {/* Fallback background with animated gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bS0yIDJ2Mmgy di0yaC0yem0wLTJ2Mmgydi0yaC0yem0tMiAydjJoMnYtMmgtMnptMC0ydjJoMnYtMmgtMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-20" />
+          {/* Animated background with rotating crop */}
+          <div className="absolute inset-0">
+            <div 
+              className="absolute inset-0 animate-[pan_30s_ease-in-out_infinite] bg-cover bg-center bg-no-repeat scale-110"
+              style={{
+                backgroundImage: 'url(https://pub-8bcbfcc0be054926a00ffbaa7bafb4e2.r2.dev/1A601EAD-CE0B-48D6-B1E2-A57DAC93D06B.png)',
+                animation: 'pan 30s ease-in-out infinite, fadeBlur 20s ease-in-out infinite'
+              }}
+            />
           </div>
           {/* Frosted overlay - Darkened */}
           <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
@@ -208,257 +212,219 @@ export default function App() {
           <img
             src="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Vault%20Logo%20and%20Artwork.gif"
             alt="VAULT54 Logo"
-            className="w-64 h-auto md:w-80 lg:w-96"
+            className="w-64 h-auto md:w-80 lg:w-96 transition-all duration-500"
+            style={{
+              filter: 'brightness(1)'
+            }}
+          />
+          {/* Glow overlay on hover */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, transparent 70%)',
+              filter: 'blur(25px)'
+            }}
           />
         </button>
 
-        {/* Motto */}
-        <div 
-          className="text-white/90 text-sm md:text-base tracking-[0.3em] uppercase"
-          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+        {/* Tagline */}
+        <h1 
+          className="text-white tracking-[0.3em] uppercase text-center"
+          style={{ fontFamily: 'Cormorant Garamond, Cinzel, serif' }}
         >
-          Virtus Et Discretio
-        </div>
+          VIRTUS ET DISCRETIO
+        </h1>
 
-        {/* CTA Button */}
-        <FrostedGlassButton
-          onClick={() => setIsApplicationModalOpen(true)}
-          className="
-            px-8 py-4 
-            text-white 
-            border-2 border-[#D4AF37]/40
-            hover:border-[#D4AF37]/60
-            hover:shadow-[0_0_40px_rgba(212,175,55,0.4)]
-            transition-all duration-500
-            tracking-widest
-            uppercase
-            text-sm md:text-base
-          "
-          style={{ fontFamily: 'Cormorant Garamond, serif' }}
-        >
-          Request Access
+        {/* Request Access Button */}
+        <FrostedGlassButton onClick={() => setIsApplicationModalOpen(true)}>
+          REQUEST ACCESS
         </FrostedGlassButton>
 
-        {/* Stats */}
-        <div className="flex gap-6 md:gap-8">
-          <div className="text-center px-6 py-4 bg-black/40 backdrop-blur-md rounded-lg border border-white/10">
-            <div 
-              className="text-2xl md:text-3xl font-bold text-white"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
-            >
-              {totalMembers}+
-            </div>
-            <div 
-              className="text-xs md:text-sm text-white/70 tracking-wider uppercase mt-1"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
-            >
-              Members
-            </div>
+        {/* Metrics */}
+        <div className="flex gap-8 items-center justify-center mt-8 text-center">
+          <div className="px-6 py-3 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 rounded-lg hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] transition-all">
+            <div className="text-4xl text-white mb-1" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{50 + totalMembers}+</div>
+            <div className="text-white/60 text-sm tracking-wider" style={{ fontFamily: 'Cormorant Garamond, serif' }}>MEMBERS</div>
           </div>
-          <div className="text-center px-6 py-4 bg-black/40 backdrop-blur-md rounded-lg border border-white/10">
-            <div 
-              className="text-2xl md:text-3xl font-bold text-white"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
-            >
-              {totalApplicants}+
-            </div>
-            <div 
-              className="text-xs md:text-sm text-white/70 tracking-wider uppercase mt-1"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
-            >
-              Applicants
-            </div>
+          <div className="px-6 py-3 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 rounded-lg hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] transition-all">
+            <div className="text-4xl text-white mb-1" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{65 + totalApplicants}+</div>
+            <div className="text-white/60 text-sm tracking-wider" style={{ fontFamily: 'Cormorant Garamond, serif' }}>APPLICANTS</div>
           </div>
         </div>
 
-        {/* Social Links */}
-        <div className="flex gap-4 mt-4">
-          <a 
-            href="mailto:contact@vault54.com" 
-            aria-label="Email"
-            className="w-12 h-12 flex items-center justify-center bg-[#8B5CF6]/80 backdrop-blur-md rounded-lg border border-white/20 hover:bg-[#8B5CF6] hover:scale-110 transition-all duration-300"
-          >
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-          </a>
-          <a 
-            href="https://instagram.com/vault54nyc" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="w-12 h-12 flex items-center justify-center bg-[#0EA5E9]/80 backdrop-blur-md rounded-lg border border-white/20 hover:bg-[#0EA5E9] hover:scale-110 transition-all duration-300"
-          >
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
-          </a>
-          <a 
-            href="https://t.me/vault54nyc" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label="Telegram"
-            className="w-12 h-12 flex items-center justify-center bg-[#EC4899]/80 backdrop-blur-md rounded-lg border border-white/20 hover:bg-[#EC4899] hover:scale-110 transition-all duration-300"
-          >
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
-          </a>
-          <a 
-            href="https://x.com/vault54nyc" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label="X (Twitter)"
-            className="w-12 h-12 flex items-center justify-center bg-[#9333EA]/80 backdrop-blur-md rounded-lg border border-white/20 hover:bg-[#9333EA] hover:scale-110 transition-all duration-300"
-          >
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-        </div>
+        {/* Social Media Icons & Work With Us */}
+        <div className="flex flex-col items-center gap-4 mt-8">
+          <div className="flex gap-6 items-center justify-center">
+            <a
+              href="mailto:vault54nyc@gmail.com"
+              className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
+              aria-label="Email"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </a>
+            <a
+              href="https://instagram.com/vaultfiftyfour"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
+              aria-label="Instagram"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+            </a>
+            <a
+              href="https://t.me/vault54"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
+              aria-label="Telegram"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z"/>
+              </svg>
+            </a>
+            <a
+              href="https://x.com/Vault54NYC"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex items-center justify-center text-white hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:border-[#D4AF37]/50 transition-all hover:scale-110"
+              aria-label="X (Twitter)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          </div>
 
-        {/* NO TEST MODE PORTAL TOGGLE BUTTONS - REMOVED FOR PRODUCTION */}
-
-        {/* Work With Us Link */}
-        <button
-          onClick={() => setIsCreatorApplicationOpen(true)}
-          className="text-white text-sm tracking-widest uppercase hover:text-white/80 transition-all underline decoration-dotted underline-offset-4 mt-2"
-          style={{ fontFamily: 'Cormorant Garamond, serif' }}
-        >
-          Work With Us
-        </button>
-      </div>
-    </div>
-
-    {/* SCREEN 3: Welcome Back Modal */}
-    <FrostedGlassModal
-      isOpen={isAccessModalOpen}
-      onClose={() => setIsAccessModalOpen(false)}
-      title="Welcome Back"
-    >
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <label 
-            htmlFor="access-code" 
-            className="block text-white/90 tracking-wider uppercase text-center"
-            style={{ fontFamily: 'Cormorant Garamond, serif' }}
-          >
-            Access Code
-          </label>
-          <input
-            id="access-code"
-            type="text"
-            value={accessCode}
-            onChange={(e) => setAccessCode(e.target.value)}
-            placeholder="Enter your Syndicate/Membership Code"
-            className="
-              w-full px-4 py-3
-              bg-black/40
-              backdrop-blur-md
-              border border-[#D4AF37]/30
-              rounded-lg
-              text-white text-center
-              placeholder:text-white/40
-              focus:outline-none
-              focus:border-[#D4AF37]/50
-              focus:ring-2
-              focus:ring-[#D4AF37]/20
-              focus:shadow-[0_0_20px_rgba(212,175,55,0.3)]
-              transition-all
-            "
-            style={{ fontFamily: 'Cormorant Garamond, serif' }}
-          />
-        </div>
-
-        <div className="flex gap-3">
-          <FrostedGlassButton
-            onClick={() => {
-              // Check for admin code
-              if (accessCode.toLowerCase() === 'admin') {
-                setCurrentScreen('admin-dashboard');
-                setIsAccessModalOpen(false);
-                setAccessCode('');
-              }
-              // Check for investor code
-              else if (accessCode.toLowerCase() === 'investor' || accessCode.toLowerCase() === 'syndicate') {
+          {/* Portal Navigation Toggles */}
+          <div className="flex flex-wrap gap-3 items-center justify-center mt-6 px-4">
+            <button
+              onClick={() => {
                 setShowTransition(true);
                 setTransitionTarget('investor-portal');
-                setIsAccessModalOpen(false);
-                setAccessCode('');
-              }
-              // Check for member code
-              else if (accessCode.toLowerCase() === 'member') {
-                setCurrentScreen('member-portal');
-                setIsAccessModalOpen(false);
-                setAccessCode('');
-              }
-              else {
-                alert('Invalid access code');
-              }
-            }}
-            className="
-              flex-1
-              px-6 py-3
-              text-white
-              border-2 border-[#D4AF37]/40
-              hover:border-[#D4AF37]/60
-              hover:shadow-[0_0_40px_rgba(212,175,55,0.4)]
-              transition-all duration-500
-              tracking-widest
-              uppercase
-              text-sm
-            "
+              }}
+              className="px-4 py-2 bg-black/60 backdrop-blur-2xl border border-[#D4AF37]/30 text-[#D4AF37] rounded-lg transition-all duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:scale-105 text-sm tracking-wider uppercase"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              💼 Syndicate Portal
+            </button>
+            <button
+              onClick={() => setCurrentScreen('member-portal')}
+              className="px-4 py-2 bg-black/60 backdrop-blur-2xl border border-[#167D7F]/30 text-[#167D7F] rounded-lg transition-all duration-300 hover:border-[#167D7F]/50 hover:shadow-[0_0_40px_rgba(22,125,127,0.4)] hover:scale-105 text-sm tracking-wider uppercase"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              👤 Member Portal
+            </button>
+            <button
+              onClick={() => setIsApplicationModalOpen(true)}
+              className="px-4 py-2 bg-black/60 backdrop-blur-2xl border border-white/30 text-white rounded-lg transition-all duration-300 hover:border-white/50 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 text-sm tracking-wider uppercase"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              📝 Apply Now
+            </button>
+          </div>
+
+          {/* Work With Us Link */}
+          <button
+            onClick={() => setIsCreatorApplicationOpen(true)}
+            className="text-white text-sm tracking-widest uppercase hover:text-white/80 transition-all underline decoration-dotted underline-offset-4 mt-2"
             style={{ fontFamily: 'Cormorant Garamond, serif' }}
           >
-            Enter
-          </FrostedGlassButton>
-          <FrostedGlassButton
-            onClick={() => {
-              setIsAccessModalOpen(false);
-              setAccessCode('');
-            }}
-            className="
-              flex-1
-              px-6 py-3
-              text-white/70
-              border-2 border-white/20
-              hover:border-white/40
-              hover:text-white
-              transition-all duration-500
-              tracking-widest
-              uppercase
-              text-sm
-            "
-            style={{ fontFamily: 'Cormorant Garamond, serif' }}
-          >
-            Cancel
-          </FrostedGlassButton>
+            Work With Us
+          </button>
         </div>
       </div>
-    </FrostedGlassModal>
 
-    {/* Application Modal */}
-    <ApplicationModal
-      isOpen={isApplicationModalOpen}
-      onClose={() => {
-        setIsApplicationModalOpen(false);
-        setSkipApplicationNDA(false);
-        setSyndicateData(null);
-      }}
-      skipNDA={skipApplicationNDA}
-      syndicateData={syndicateData}
-    />
+      {/* SCREEN 3: Welcome Back Modal */}
+      <FrostedGlassModal
+        isOpen={isAccessModalOpen}
+        onClose={() => setIsAccessModalOpen(false)}
+        title="Welcome Back"
+      >
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label 
+              htmlFor="access-code" 
+              className="block text-white/90 tracking-wider uppercase text-center"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              Access Code
+            </label>
+            <input
+              id="access-code"
+              type="text"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
+              placeholder="Enter your Syndicate/Membership Code"
+              className="
+                w-full px-4 py-3
+                bg-black/40
+                backdrop-blur-md
+                border border-[#D4AF37]/30
+                rounded-lg
+                text-white text-center
+                placeholder:text-white/40
+                focus:outline-none
+                focus:border-[#D4AF37]/50
+                focus:ring-2
+                focus:ring-[#D4AF37]/20
+                focus:shadow-[0_0_20px_rgba(212,175,55,0.3)]
+                transition-all
+              "
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            />
+          </div>
 
-    {/* Content Creator Application */}
-    <ContentCreatorApplication
-      isOpen={isCreatorApplicationOpen}
-      onClose={() => setIsCreatorApplicationOpen(false)}
-    />
+          <div className="flex justify-center">
+            <FrostedGlassButton
+              onClick={() => {
+                const code = accessCode.toLowerCase().trim();
+                if (code === 'zeus123') {
+                  setCurrentScreen('admin-dashboard');
+                  setIsAccessModalOpen(false);
+                } else if (code === 'member123') {
+                  // Test member portal access code
+                  setCurrentScreen('member-portal');
+                  setIsAccessModalOpen(false);
+                } else if (code === 'investor123') {
+                  // Investor code - trigger dramatic transition
+                  setIsAccessModalOpen(false);
+                  setShowTransition(true);
+                  setTransitionTarget('investor-portal');
+                } else {
+                  alert('Invalid access code');
+                }
+              }}
+            >
+              <span className="mx-auto">SUBMIT</span>
+            </FrostedGlassButton>
+          </div>
+        </div>
+      </FrostedGlassModal>
 
-    {/* Dramatic Transition Effect */}
-    {showTransition && transitionTarget && (
+      {/* Application Modal */}
+      <ApplicationModal
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        skipNDA={skipApplicationNDA}
+        syndicateData={syndicateData}
+      />
+
+      {/* Content Creator Application Modal */}
+      {isCreatorApplicationOpen && (
+        <ContentCreatorApplication onClose={() => setIsCreatorApplicationOpen(false)} />
+      )}
+
+      {/* Dramatic Transition Effect */}
       <DramaticTransition
+        isActive={showTransition}
+        logoSrc="https://pub-9d626ca0cdc24f10b1eafa376be49b92.r2.dev/Vault%20Logo%20and%20Artwork.gif"
         onComplete={() => {
           setShowTransition(false);
           if (transitionTarget) {
@@ -467,10 +433,37 @@ export default function App() {
           }
         }}
       />
-    )}
 
-    {/* Gold Particles */}
-    <GoldParticles />
-  </div>
+      {/* Import fonts and animations */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
+        
+        @keyframes pan {
+          0%, 100% {
+            transform: scale(1.1) translate(0, 0);
+          }
+          25% {
+            transform: scale(1.15) translate(-2%, -2%);
+          }
+          50% {
+            transform: scale(1.1) translate(2%, 2%);
+          }
+          75% {
+            transform: scale(1.15) translate(-1%, 1%);
+          }
+        }
+        
+        @keyframes fadeBlur {
+          0%, 100% {
+            filter: blur(0px);
+            opacity: 1;
+          }
+          50% {
+            filter: blur(3px);
+            opacity: 0.8;
+          }
+        }
+      `}</style>
+    </div>
   );
 }
